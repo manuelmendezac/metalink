@@ -349,5 +349,118 @@ Construimos la base. Nuestro equipo desarrolla plataformas SaaS B2B, ecosistemas
         }
       })();
     </script>
+    
+    <!-- Fix para prevenir scroll de página cuando se hace scroll en el chat -->
+    <style>
+      /* Prevenir scroll de página cuando el usuario está dentro del widget */
+      [id*="aura"], [class*="aura"], [id*="chat"], [class*="chat"], 
+      [id*="widget"], [class*="widget"], [id*="scalexone"], [class*="scalexone"] {
+        overscroll-behavior: contain;
+      }
+      
+      /* Aplicar a iframes del widget si existen */
+      iframe[src*="aura"], iframe[src*="scalexone"], iframe[src*="chat"] {
+        overscroll-behavior: contain;
+      }
+    </style>
+    
+    <script>
+      // Prevenir propagación del scroll del widget a la página
+      (function() {
+        function preventWidgetScrollPropagation() {
+          // Esperar a que el widget se cargue
+          var checkInterval = setInterval(function() {
+            // Buscar elementos del widget por varios selectores comunes
+            var widgetSelectors = [
+              '[id*="aura"]',
+              '[class*="aura"]',
+              '[id*="chat"]',
+              '[class*="chat"]',
+              '[id*="widget"]',
+              '[class*="widget"]',
+              '[id*="scalexone"]',
+              '[class*="scalexone"]',
+              'iframe[src*="aura"]',
+              'iframe[src*="scalexone"]'
+            ];
+            
+            var widgetFound = false;
+            
+            widgetSelectors.forEach(function(selector) {
+              try {
+                var elements = document.querySelectorAll(selector);
+                if (elements.length > 0) {
+                  widgetFound = true;
+                  elements.forEach(function(element) {
+                    // Prevenir propagación del scroll
+                    element.addEventListener('wheel', function(e) {
+                      var element = e.currentTarget;
+                      var scrollTop = element.scrollTop;
+                      var scrollHeight = element.scrollHeight;
+                      var height = element.clientHeight;
+                      var isScrollingUp = e.deltaY < 0;
+                      var isScrollingDown = e.deltaY > 0;
+                      
+                      // Si está en el tope y hace scroll hacia arriba, prevenir
+                      if (scrollTop === 0 && isScrollingUp) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                      }
+                      
+                      // Si está en el fondo y hace scroll hacia abajo, prevenir
+                      if (scrollTop + height >= scrollHeight - 1 && isScrollingDown) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                      }
+                      
+                      // Si hay scroll disponible, prevenir propagación
+                      if ((isScrollingUp && scrollTop > 0) || 
+                          (isScrollingDown && scrollTop + height < scrollHeight)) {
+                        e.stopPropagation();
+                      }
+                    }, { passive: false });
+                    
+                    // Prevenir propagación del touchmove (móviles)
+                    element.addEventListener('touchmove', function(e) {
+                      e.stopPropagation();
+                    }, { passive: false });
+                    
+                    // Prevenir propagación del scroll event
+                    element.addEventListener('scroll', function(e) {
+                      e.stopPropagation();
+                    });
+                  });
+                }
+              } catch (e) {
+                // Ignorar errores de selectores
+              }
+            });
+            
+            // Si encontramos el widget, detener la búsqueda después de un tiempo
+            if (widgetFound) {
+              clearInterval(checkInterval);
+              console.log('[Aura Widget] Scroll fix aplicado correctamente');
+            }
+          }, 500);
+          
+          // Detener la búsqueda después de 10 segundos
+          setTimeout(function() {
+            clearInterval(checkInterval);
+          }, 10000);
+        }
+        
+        // Ejecutar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', preventWidgetScrollPropagation);
+        } else {
+          preventWidgetScrollPropagation();
+        }
+        
+        // También ejecutar después de un delay para asegurar que el widget se haya cargado
+        setTimeout(preventWidgetScrollPropagation, 2000);
+      })();
+    </script>
 </body>
 </html>
