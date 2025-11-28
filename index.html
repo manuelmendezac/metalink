@@ -312,42 +312,79 @@ Construimos la base. Nuestro equipo desarrolla plataformas SaaS B2B, ecosistemas
     <!-- End of bodyEnd -->
     
     <!-- Aura Agent Widget - ScaleXone UPDATED v2.0 -->
+
     <script>
+
       (function() {
+
         // Verificar que el DOM esté listo
+
         function initAuraWidget() {
+
           try {
-            var script = document.createElement('script');
+
+        var script = document.createElement('script');
+
             script.src = 'https://scalexone.app/aura-widget-fallback.js?v=' + Date.now();
-            script.setAttribute('data-agent-id', '51da5717-107a-46f8-8f03-5aee5e0b8f4a');
-            script.setAttribute('data-api-key', 'aura_qbS5DtOftjxHE_rBGqBLm35m07WsmYw7y6mvaRu_lzA');
+
+        script.setAttribute('data-agent-id', '51da5717-107a-46f8-8f03-5aee5e0b8f4a');
+
+        script.setAttribute('data-api-key', 'aura_qbS5DtOftjxHE_rBGqBLm35m07WsmYw7y6mvaRu_lzA');
+
             script.onerror = function() {
+
               console.error('[Aura Widget] Error cargando el script del widget');
+
             };
+
             script.onload = function() {
+
               console.log('[Aura Widget] Script cargado correctamente');
+
             };
+
             
+
             // Agregar al head o body según disponibilidad
+
             if (document.head) {
-              document.head.appendChild(script);
+
+        document.head.appendChild(script);
+
             } else if (document.body) {
+
               document.body.appendChild(script);
+
             } else {
+
               console.error('[Aura Widget] No se pudo encontrar head o body para insertar el script');
+
             }
+
           } catch (error) {
+
             console.error('[Aura Widget] Error inicializando widget:', error);
+
           }
+
         }
+
         
+
         // Ejecutar cuando el DOM esté listo
+
         if (document.readyState === 'loading') {
+
           document.addEventListener('DOMContentLoaded', initAuraWidget);
+
         } else {
+
           initAuraWidget();
+
         }
+
       })();
+
     </script>
     
     <!-- Fix para prevenir scroll de página cuando se hace scroll en el chat -->
